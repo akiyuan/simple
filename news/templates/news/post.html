@@ -1,0 +1,51 @@
+{% extends "mainApp/wrapper.html" %}
+{% load bootstrap3 %}
+
+{% block content %}
+
+<head>
+    <meta content="{{ articles.tags.all|join:", " }}">
+    <script src="https://yastatic.net/share2/share.js" async="async"></script>
+    {% load staticfiles %}
+    <script src="{% static 'js/readremaining.jquery.js'%}"></script>
+    <link rel="stylesheet" href="{% static 'css/rr_light.css'%}" type="text/css" />
+</head>
+
+<style>
+    p {
+	 text-indent: 20px; /* Отступ первой строки в пикселах */
+	}
+ </style>
+
+{% if articles.category.count == 1 %}
+<p>Категория:{{articles.category}}</p>
+{% endif%}
+<div class='container'>
+    <div class="text_read">
+        {% if articles.tags%}
+        Метки: {{ articles.tags.all|join:", " }}
+        {% endif%}
+        <h6>Опубликовано:{{articles.date|date:"Y-m-d в H:i:s"}}</h6>
+        <h6>Автор:{{articles.author}}</h6>
+        <h4>{{articles.title}}</h4>
+        <div class="container">
+            {% if articles.image %}
+            <img src="{{articles.image.url}}">
+            {% endif %}
+        </div>
+        {{articles.post|safe|linebreaks}}
+    </div>
+
+    <div>
+        <a href="{% url 'delete' articles.id %}">
+            <button type="button" class="btn btn-success">
+                Удалить запись
+            </button>
+        </a>
+        <a href="{% url 'update' articles.id %}">
+            <button type="button" class="btn btn-primary">
+                Редактировать запись</button>
+            </a>
+</div>
+</div>
+{% endblock %}

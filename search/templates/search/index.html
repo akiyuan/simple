@@ -1,0 +1,26 @@
+{% extends "mainApp/wrapper.html" %}
+
+{% block content %}
+
+<h1>Поиск</h1>
+  {% for article in object_list %}
+      <div>
+          <a href="/news/{{article.id}}">
+              <h2>{{ article.title }}</h2>
+          </a>
+
+          {{ article.post|safe }}
+          <button class="learn-more" >
+            <a href="/news/{{ article.id }}/">
+              <!--
+              <div class="circle">
+                <span class="icon arrow"></span>
+              </div>
+              <p class="button-text">Далее</p>
+            </button>-->
+      </div>
+  {% empty %}
+      <p>Не найдено публикаций по вашему запросу<br>Попробуйте повторить запрос с другой формулировкой</p>
+  {% endfor %}
+
+{% endblock %}

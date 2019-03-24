@@ -1,0 +1,167 @@
+﻿<!DOCTYPE HTML>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Простой сайт</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    {% load staticfiles %}
+    <link rel="stylesheet" href="{% static 'css\lightslider.css'%}" />
+    <link rel="stylesheet" href="{% static 'css\bootstrap.min.css'%}" type="text/css" />
+    <link rel="stylesheet" href="{% static 'css\jquery-ui.min.css'%}" type="text/css" />
+    <link rel="stylesheet" href="{% static 'css\styles.css'%}" type="text/css" />
+    <script src="{% static 'js\jquery-3.3.1.min.js'%}"></script>
+    <script src="{% static 'js\jquery-ui.min.js'%}"></script>
+    <script src="{% static 'js\bootstrap-dropdown.js'%}"></script>
+</head>
+
+<body>
+    <nav class="navbar navbar-default">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1"
+                    aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/">Главная</a>
+            </div>
+
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav menu">
+                    <li><a href="/news">Новости</a></li>
+                    <li><a href="/contact">Контакты</a></li>
+                </ul>
+                </li>
+                </ul>
+
+                <form action="{% url 'article_search' %}" method="GET" class="navbar-form navbar-left">
+                    <div class="form-group">
+                        <input type="text" name="q" class="form-control" placeholder="Введите запрос">
+                    </div>
+                    <button type="submit" class="btn btn-default">Поиск</button>
+                </form>
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        {% if user.is_authenticated %}
+                        <a href="{% url 'new_post' %}">Добавить запись</a>
+                        {% else %}
+                        {% endif %}
+                    </li>
+                    <li class="dropdown">
+                        {% if user.is_authenticated %}
+                        <a href="{% url 'logout'%}?next={{request.path}}">Выйти</a>
+                        {% else %}
+                        <a href="{% url 'login'%}?next={{request.path}}" id="login1">Войти</a>
+                        {% endif %}
+                    </li>
+                </ul>
+            </div><!-- /.navbar-collapse -->
+        </div><!-- /.container-fluid -->
+    </nav>
+
+
+    {% block content %}
+    {% endblock %}
+
+    </div>
+
+    <div id="hello">
+        <form action="{% url 'login' %}" method='post'> Авторизация <br>
+            {% csrf_token %}
+            <label for="username">Логин:</label>
+            <input type="text" name="username" value="" id="username">
+            <label for="password">Пароль:</label>
+            <input type="password" name="password" value="" id="password">
+
+            <input type="submit" value="Отправить" />
+            <input type="hidden" name="next" value="{{ next|escape }}" />
+        </form>
+        <p><a>Впервые на сайте? Регистрация</a></p>
+    </div>
+    </nav>
+    <script>jQuery('ul.nav > li').hover(function () {
+            jQuery(this).find('.dropdown-menu').stop(true, true).delay(200).fadeIn();
+        },
+            function () {
+                jQuery(this).find('.dropdown-menu').stop(true, true).delay(200).fadeOut();
+            })
+    </script>
+
+    <script> $(document).ready(function () {
+            $('#hello').dialog(
+                {
+                    autoOpen: false,
+                    modal: true,
+                    resizeble: false,
+                    draggable: false,
+                    hide: 'explode'
+                }
+            );
+            $('#login1').click(function (evt) {
+                evt.preventDefault();
+                $('#hello').dialog('open');
+            })
+        });
+    </script>
+
+    <article><canvas width="300" height="100"></canvas></article>
+
+    <script>
+        buildSpinner({ x: 50, y: 50, size: 20, degrees: 30 });
+        function buildSpinner(data) {
+
+            var canvas = document.createElement('canvas');
+            canvas.height = 100;
+            canvas.width = 300;
+            document.getElementsByTagName('article')[0].appendChild(canvas);
+            var ctx = canvas.getContext("2d"),
+                i = 0, degrees = data.degrees, loops = 0, degreesList = [];
+
+            for (i = 0; i < degrees; i++) {
+                degreesList.push(i);
+            }
+
+            // reset
+            i = 0;
+
+            // so I can kill it later
+            window.canvasTimer = setInterval(draw, 1000 / degrees);
+            function reset() {
+                ctx.clearRect(0, 0, 100, 100); // clear canvas
+
+                var left = degreesList.slice(0, 1);
+                var right = degreesList.slice(1, degreesList.length);
+                degreesList = right.concat(left);
+            }
+
+            function draw() {
+                var c, s, e;
+                var d = 0;
+                if (i == 0) {
+                    reset();
+                }
+                ctx.save();
+                d = degreesList;
+                c = Math.floor(255 / degrees * i);
+                ctx.strokeStyle = 'rgb(' + c + ', ' + c + ', ' + c + ')';
+                ctx.lineWidth = data.size;
+                ctx.beginPath();
+                s = Math.floor(360 / degrees * (d));
+                e = Math.floor(360 / degrees * (d + 1)) - 1;
+                ctx.arc(data.x, data.y, data.size, (Math.PI / 180) * s, (Math.PI / 180) * e, false);
+                ctx.stroke();
+                ctx.restore();
+                i++;
+                if (i >= degrees) {
+                    i = 0;
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>
